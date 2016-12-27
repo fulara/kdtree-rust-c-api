@@ -1,6 +1,11 @@
 [package]
 name = "kdtree-rust-c-api"
 version = "0.1.0"
-authors = ["Olek <ntszar@gmail.com>"]
+authors = ["fulara <ntszar@gmail.com>"]
+
+[lib]
+name = "kdtree_rust_c_api"
+crate-type = ["dylib"]
 
 [dependencies]
+libc = "*"
