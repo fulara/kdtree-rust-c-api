@@ -1,0 +1,6 @@
+[package]
+name = "kdtree-rust-c-api"
+version = "0.1.0"
+authors = ["Olek <ntszar@gmail.com>"]
+
+[dependencies]
