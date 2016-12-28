@@ -2,29 +2,35 @@
 
 extern crate libc;
 
-extern crate kdtree_rust;
+extern crate kdtree;
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct Point3WithId {
     num: i32,
     dims: [f64;3],
 }
 
-impl ::kdtree_rust::kdtree::KdtreePointTrait for Point3WithId {
+impl ::kdtree::kdtree::KdtreePointTrait for Point3WithId {
     fn dims(&self) -> &[f64] {
         &self.dims
     }
 }
 
-static mut KDTREE: Option<kdtree_rust::kdtree::Kdtree<Point3WithId>> = None;
+static mut KDTREE: Option<kdtree::kdtree::Kdtree<Point3WithId>> = None;
 
 #[no_mangle]
-pub extern "C" fn create_tree() -> i32 {
-    let v : Vec<Point3WithId> = vec![];
+pub extern "C" fn kdtree_create(array_pointer: *mut Point3WithId, size: libc::size_t) {
     unsafe {
-        KDTREE = Some(::kdtree_rust::kdtree::Kdtree::new(v));
+        KDTREE = Some(::kdtree::kdtree::Kdtree::new(std::slice::from_raw_parts_mut(array_pointer, size as usize)));
     }
-    3
+}
+
+#[no_mangle]
+pub extern "C" fn kdtree_nearest_search(searched_for : *mut Point3WithId) -> Point3WithId {
+    unsafe {
+        KDTREE.as_ref().unwrap().nearest_search(&(*searched_for))
+    }
 }
 
 #[cfg(test)]
