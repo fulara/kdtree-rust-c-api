@@ -30,44 +30,63 @@ impl ::kdtree::kdtree::KdtreePointTrait for Point2WithId {
     }
 }
 
-static mut KDTREE3: Option<kdtree::kdtree::Kdtree<Point3WithId>> = None;
-static mut KDTREE2: Option<kdtree::kdtree::Kdtree<Point2WithId>> = None;
-
 #[no_mangle]
-pub extern "C" fn kdtree3_create(array_pointer: *mut Point3WithId, size: libc::size_t) {
+pub extern "C" fn kdtree3_create_ctx(array_pointer: *mut Point3WithId, size: libc::size_t) -> *mut libc::c_void {
     unsafe {
-        KDTREE3 = Some(::kdtree::kdtree::Kdtree::new(std::slice::from_raw_parts_mut(array_pointer, size as usize)));
+        let mut tree = Box::new(::kdtree::kdtree::Kdtree::new(std::slice::from_raw_parts_mut(array_pointer, size as usize)));
+        let ptr: *mut ::kdtree::kdtree::Kdtree<Point3WithId> = &mut *tree;
+        ::std::mem::forget(tree);
+
+        ptr as *mut ::libc::c_void
     }
 }
 
 #[no_mangle]
-pub extern "C" fn kdtree3_nearest_search(searched_for : *mut Point3WithId) -> Point3WithId {
-    unsafe {
-        KDTREE3.as_ref().unwrap().nearest_search(&(*searched_for))
-    }
+pub extern "C" fn kdtree3_free(ptr: *mut libc::c_void) {
+    let obj: Box<::kdtree::kdtree::Kdtree<Point3WithId>> = unsafe { ::std::mem::transmute(ptr) };
 }
 
 #[no_mangle]
-pub extern "C" fn kdtree3_has_neighbor_in_range(searched_for : *mut Point3WithId, range :f64 ) -> bool {
-    unsafe {
-        KDTREE3.as_ref().unwrap().has_neighbor_in_range(&(*searched_for), range)
-    }
+pub extern "C" fn kdtree2_free(ptr: *mut libc::c_void) {
+    let obj : Box<::kdtree::kdtree::Kdtree<Point3WithId>> = unsafe { ::std::mem::transmute(ptr) };
 }
 
 #[no_mangle]
-pub extern "C" fn kdtree3_distance_squared_to_nearest(searched_for : *mut Point3WithId ) -> f64 {
+pub extern "C" fn kdtree3_nearest_search(ptr: *mut libc::c_void, searched_for : *mut Point3WithId) -> Point3WithId {
     unsafe {
-        KDTREE3.as_ref().unwrap().distance_squared_to_nearest(&(*searched_for))
+        let tree = ptr as *mut ::kdtree::kdtree::Kdtree<Point3WithId>;
+        (*tree).nearest_search(&(*searched_for))
     }
 }
+
 
 #[no_mangle]
-pub extern "C" fn kdtree3_insert_node(node : *mut Point3WithId) {
+pub extern "C" fn kdtree3_has_neighbor_in_range(ptr: *mut libc::c_void,searched_for : *mut Point3WithId, range :f64 ) -> bool {
     unsafe {
-        KDTREE3.as_mut().unwrap().insert_node(*node);
+        let tree = ptr as *mut ::kdtree::kdtree::Kdtree<Point3WithId>;
+        (*tree).has_neighbor_in_range(&(*searched_for), range)
     }
 }
 
+
+#[no_mangle]
+pub extern "C" fn kdtree3_distance_squared_to_nearest(ptr: *mut libc::c_void,searched_for : *mut Point3WithId ) -> f64 {
+    unsafe {
+        let tree = ptr as *mut ::kdtree::kdtree::Kdtree<Point3WithId>;
+        (*tree).distance_squared_to_nearest(&(*searched_for))
+    }
+}
+
+
+#[no_mangle]
+pub extern "C" fn kdtree3_insert_node(ptr: *mut libc::c_void,node : *mut Point3WithId) {
+    unsafe {
+        let tree = ptr as *mut ::kdtree::kdtree::Kdtree<Point3WithId>;
+        (*tree).insert_node(*node);
+    }
+}
+
+/*
 #[no_mangle]
 pub extern "C" fn kdtree2_create(array_pointer: *mut Point2WithId, size: libc::size_t) {
     unsafe {
@@ -102,6 +121,7 @@ pub extern "C" fn kdtree2_insert_node(node : *mut Point2WithId) {
         KDTREE2.as_mut().unwrap().insert_node(*node);
     }
 }
+*/
 
 #[cfg(test)]
 mod tests {
