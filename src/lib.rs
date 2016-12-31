@@ -81,6 +81,14 @@ pub extern "C" fn kdtree3_insert_node(ptr: *mut libc::c_void,node : *mut Point3W
     }
 }
 
+#[no_mangle]
+pub extern "C" fn kdtree3_insert_nodes(ptr: *mut libc::c_void,array_pointer: *mut Point3WithId, size: libc::size_t) {
+    unsafe {
+        let tree = ptr as *mut ::kdtree::kdtree::Kdtree<Point3WithId>;
+        (*tree).insert_nodes_and_rebuild(std::slice::from_raw_parts_mut(array_pointer, size as usize));
+    }
+}
+
 
 #[no_mangle]
 pub extern "C" fn kdtree2_create(array_pointer: *mut Point2WithId, size: libc::size_t) -> *mut libc::c_void {
@@ -130,6 +138,14 @@ pub extern "C" fn kdtree2_insert_node(ptr: *mut libc::c_void,node : *mut Point2W
     unsafe {
         let tree = ptr as *mut ::kdtree::kdtree::Kdtree<Point2WithId>;
         (*tree).insert_node(*node);
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn kdtree2_insert_nodes(ptr: *mut libc::c_void,array_pointer: *mut Point2WithId, size: libc::size_t) {
+    unsafe {
+        let tree = ptr as *mut ::kdtree::kdtree::Kdtree<Point2WithId>;
+        (*tree).insert_nodes_and_rebuild(std::slice::from_raw_parts_mut(array_pointer, size as usize));
     }
 }
 
