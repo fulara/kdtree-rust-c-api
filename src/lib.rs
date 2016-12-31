@@ -31,7 +31,7 @@ impl ::kdtree::kdtree::KdtreePointTrait for Point2WithId {
 }
 
 #[no_mangle]
-pub extern "C" fn kdtree3_create_ctx(array_pointer: *mut Point3WithId, size: libc::size_t) -> *mut libc::c_void {
+pub extern "C" fn kdtree3_create(array_pointer: *mut Point3WithId, size: libc::size_t) -> *mut libc::c_void {
     unsafe {
         let mut tree = Box::new(::kdtree::kdtree::Kdtree::new(std::slice::from_raw_parts_mut(array_pointer, size as usize)));
         let ptr: *mut ::kdtree::kdtree::Kdtree<Point3WithId> = &mut *tree;
