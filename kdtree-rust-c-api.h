@@ -17,6 +17,7 @@ Point3WithId kdtree3_nearest_search(void* tree, Point3WithId* for_node);
 bool kdtree3_has_neighbor_in_range(void* tree, Point3WithId* for_node, double range);
 double kdtree3_distance_squared_to_nearest(void* tree, Point3WithId* for_node);
 double kdtree3_insert_node(void* tree, Point3WithId* for_node);
+void kdtree3_free(void* tree);
 
 /*
 void* kdtree2_create(Point2WithId* points, size_t len);
