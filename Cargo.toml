@@ -9,4 +9,4 @@ crate-type = ["dylib"]
 
 [dependencies]
 libc = "*"
-kdtree_rust = { git = "https://github.com/fulara/kdtree-rust", branch="develop"}
+fux_kdtree = { git = "https://github.com/fulara/kdtree-rust", branch="develop"}
