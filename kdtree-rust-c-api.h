@@ -3,7 +3,7 @@
 extern "C" {
 
 struct Point3WithId {
-    size_t pointer;
+    void* pointer;
     double vals[3];
 };
 
